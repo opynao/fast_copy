@@ -8,6 +8,9 @@
 #include <optional>
 #include <thread>
 #include <type_traits>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 namespace FastCopy
 {

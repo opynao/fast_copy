@@ -33,9 +33,8 @@ namespace helper_functions
     char log_level[]{"--loglevel"};
     char mode[]{"--mode"};
     char queue[]{"--queue"};
-    char invalid_path[]{"/path/to/source"};
 
-    void CreateDirectory(const char *DIR)
+    void CreateDir(const char *DIR)
     {
         if (fs::exists(std::string(DIR)))
             fs::remove_all(DIR);
@@ -43,7 +42,7 @@ namespace helper_functions
         fs::create_directory(DIR);
     }
 
-    void CreateFile(const std::string &str, const char *DIR)
+    void CreateF(const std::string &str, const char *DIR)
     {
         std::ofstream config(DIR);
 
@@ -77,5 +76,14 @@ namespace helper_functions
 
         std::cout << "# of files in " << DIR << ": " << count << '\n';
         return count;
+    }
+    
+    std::vector<char*> ConvertToArgv(const std::vector<std::string>& arguments)
+    {
+        std::vector<char*> argv;
+        for (const auto& arg : arguments)
+            argv.push_back((char*)arg.data());
+        argv.push_back(nullptr);
+        return argv;
     }
 }

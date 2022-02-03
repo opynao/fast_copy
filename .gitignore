@@ -1,2 +1,50 @@
-__build
-.vs
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.bak
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Testing
+
+# Visual Studio
+*.sln
+*.vcproj
+*.vcxproj
+*.vcproj.*
+*.vcxproj.*
+.vs/
+Debug/
+Release/
+__build/
+build/
+out/
+msvs_build/
+gcc_build/
+clang_build/
+cl_build/
+buil/

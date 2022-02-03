@@ -2,10 +2,7 @@
 
 #include "types.h"
 
-#include <filesystem>
 #include <string>
-
-namespace fs = std::filesystem;
 
 namespace FastCopy
 {
