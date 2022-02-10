@@ -49,20 +49,35 @@ TEST(IniSettingsParserTest, EventsGenerating)
 
 TEST(JsonSettingsParserTest, EventsGenerating)
 {
-    const std::string str = "{\n\"source\" : \"/mnt/d/task/programming_books/\",\n"
-                            "\"destination\" : \"/mnt/d/task/test/\",\n"
+#if defined(_WIN32)
+    const std::string str = "{\n\"source\" : \"D:\\task\\programming_books\\\",\n"
+                            "\"destination\" : \"D:\\task\\test\\\",\n"
                             "\"mode\" : \"regular\",\n"
                             "\"periodicity\" : \"1000\",\n"
                             "\"threads\" : \"6\",\n"
                             "\"addext\" : \".swp\",\n"
                             "\"mask\" : \".\",\n"
                             "\"loglevel\" : \"info\"\n}";
+#else
+    const std::string str = "{\n\"source\" : \"/mnt/d/task/programming_books/\",\n"
+        "\"destination\" : \"/mnt/d/task/test/\",\n"
+        "\"mode\" : \"regular\",\n"
+        "\"periodicity\" : \"1000\",\n"
+        "\"threads\" : \"6\",\n"
+        "\"addext\" : \".swp\",\n"
+        "\"mask\" : \".\",\n"
+        "\"loglevel\" : \"info\"\n}";
+#endif
     CreateF(str, CONFIG_JSON);
 
     auto configuration = std::make_shared<ConfigurationManagerMock>();
-
+#if defined(_WIN32)
+    EXPECT_CALL(*configuration, OnPath(PathType::Source, "D:\\task\\programming_books\\"));
+    EXPECT_CALL(*configuration, OnPath(PathType::Destination, "D:\\task\\test\\"));
+#else
     EXPECT_CALL(*configuration, OnPath(PathType::Source, "/mnt/d/task/programming_books/"));
     EXPECT_CALL(*configuration, OnPath(PathType::Destination, "/mnt/d/task/test/"));
+#endif
     EXPECT_CALL(*configuration, OnOperationMode("regular"));
     EXPECT_CALL(*configuration, OnThreadsNumber("6"));
     EXPECT_CALL(*configuration, OnAdditionalFileExtension(".swp"));

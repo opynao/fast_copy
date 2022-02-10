@@ -104,6 +104,16 @@ TEST(CommandLineParserTest, EventsCalling)
 TEST(CommandLineParserTest, ConfigurationFileAndCliArguments)
 {
 	CreateDir(DESTINATION_DIR);
+#if defined(_WIN32)
+	const std::string str = "source = D:\\task\\programming_books\\\n"
+		"destination = D:\\task\\test\\\n"
+		"mode = backup\n"
+		"periodicity = 10\n"
+		"threads = 100\n"
+		"addext = .swp\n"
+		"mask = .\n"
+		"loglevel = error\n";
+#else
 	const std::string str = "source = /mnt/d/task/programming_books/\n"
 		"destination = /mnt/d/task/test/\n"
 		"mode = backup\n"
@@ -112,6 +122,7 @@ TEST(CommandLineParserTest, ConfigurationFileAndCliArguments)
 		"addext = .swp\n"
 		"mask = .\n"
 		"loglevel = error\n";
+#endif
 	CreateF(str, CONFIG_INI);
 
 	auto configuration = std::make_shared<ConfigurationManagerMock>();

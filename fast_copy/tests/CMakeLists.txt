@@ -1,5 +1,3 @@
-# sources
-
 file(GLOB_RECURSE TEST_SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 set(LIB_LIST_TESTS

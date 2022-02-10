@@ -1,0 +1,10 @@
+{
+"source" : "D:\task\programming_books\",
+"destination" : "D:\task\test\",
+"mode" : "regular",
+"periodicity" : "1000",
+"threads" : "6",
+"addext" : ".swp",
+"mask" : ".",
+"loglevel" : "info"
+}

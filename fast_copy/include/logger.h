@@ -9,7 +9,7 @@
 #include <memory>
 #include <iostream>
 
-#define LOG_ENABLED
+//#define LOG_ENABLED
 #define LOGF std::cerr << __FUNCTION__ << " = " << __LINE__ << std::endl
 #define PR(x) std::cerr << #x << "=" << x << std::endl
 #define LOG(message) std::cerr << message << std::endl

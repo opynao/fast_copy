@@ -11,10 +11,7 @@ file(GLOB_RECURSE SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 add_library(${PROJECT_NAME}_lib ${SRC_FILES})
 
-set(LIB_LIST
-#   ${PROJECT_NAME}_lib
-    spdlog::spdlog
-)
+set(LIB_LIST spdlog::spdlog)
 
 # building
 add_executable(${PROJECT_NAME} ${SRC_FILES})

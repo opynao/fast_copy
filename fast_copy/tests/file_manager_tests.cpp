@@ -44,7 +44,6 @@ TEST_F(FileManagerTest, FileNameMask_FileDoesNotMatchMask)
     fast_copy(argv.size() - 1, argv.data());
 
     EXPECT_TRUE(fs::is_empty(fs::path(DESTINATION_DIR_1)));
-    assert(false);
 }
 
 TEST_F(FileManagerTest, FileNameMask_FileMatchesMask)

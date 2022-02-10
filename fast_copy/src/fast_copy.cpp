@@ -22,7 +22,7 @@ using namespace Utils;
 
 void FastCopy::fast_copy(int argc, char *argv[])
 {
-    LogInit();
+//    LogInit();
     auto config = InitializeConfig(argc, argv);
 
     if (config->GetHelp())

@@ -68,7 +68,6 @@ TEST(ConfigurationManagerTest, DestinationDirectoryIsInvalid)
 TEST(ConfigurationManagerTest, DirectoryWithSpacesInName)
 {
     CreateDir(DESTINATION_DIR_WITH_SPACE);
-
     auto configuration = std::make_shared<ConfigurationManager>();
     std::vector<std::string> v{ fast_copy_ar, source, SOURCE_DIR, destination, DESTINATION_DIR_WITH_SPACE };
     auto argv = ConvertToArgv(v);
