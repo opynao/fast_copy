@@ -10,30 +10,30 @@ namespace fs = std::filesystem;
 using namespace helper_functions;
 
 // To run tests you need to turn off LOG_ENABLED define in logger.h
-// And to comment out LogInit in fast_copy.cpp
 class SpeedTest : public ::testing::Test
 {
 protected:
 	void SetUp() override
 	{
-		//helper_functions::CreateDir(DESTINATION_DIR);
-		//SizeOfDir(SOURCE_DIR);
-		//std::cout << std::endl;
+		CreateDir(DESTINATION_DIR);
+		SizeOfDir(SOURCE_DIR_3);
+		std::cout << std::endl;
 	}
 };
 
 // TEST_F(SpeedTest, CopyUtilityLinux)
 // {
-//     std::cout << "cp utility in Linux runtime - " << profiler<>::duration(CopyUtilityLinux, SOURCE_DIR, DESTINATION_DIR).count() << " ms\n";
-//     calculateMemoryUsage();
+// 	std::cout << "cp utility in Linux runtime - " << profiler<>::duration(CopyUtilityLinux, SOURCE_DIR_3, DESTINATION_DIR).count() << " ms\n";
+// 	calculateMemoryUsage();
 // }
 
-// TEST_F(SpeedTest, FastCopyUtility)
-// {
-//     char *argv[] = {fast_copy_ar, source, SOURCE_DIR, destination, DESTINATION_DIR};
-//     std::cout << "fast copy without logging runtime - " << profiler<>::duration(FastCopy::fast_copy, (sizeof(argv) / sizeof(argv[0])), argv).count() << " ms\n";
-//     calculateMemoryUsage();
-// }
+TEST_F(SpeedTest, FastCopyUtility)
+{
+	std::vector<std::string> v{fast_copy_ar, source, SOURCE_DIR_3, destination, DESTINATION_DIR};
+	auto argv = ConvertToArgv(v);
+	std::cout << "fast copy without logging runtime - " << profiler<>::duration(FastCopy::fast_copy, argv.size() - 1, argv.data()).count() << " ms\n";
+	calculateMemoryUsage();
+}
 
 // TEST(SpeedTest1, FastCopyUtility_QueueSize)
 // {

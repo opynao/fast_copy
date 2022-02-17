@@ -14,7 +14,6 @@ using namespace FastCopy;
 using namespace helper_functions;
 
 // To run tests you need to turn off LOG_ENABLED define in logger.h
-// And to comment out LogInit in fast_copy.cpp
 /////////////////////CONFIG PATH INVALID///////////////////
 TEST(CommandLineParserTest, ConfigFileInvalidPath)
 {

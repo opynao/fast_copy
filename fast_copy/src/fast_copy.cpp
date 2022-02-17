@@ -19,10 +19,11 @@
 
 using namespace Utils;
 
-
 void FastCopy::fast_copy(int argc, char *argv[])
 {
-//    LogInit();
+#if defined LOG_ENABLED
+    LogInit();
+#endif
     auto config = InitializeConfig(argc, argv);
 
     if (config->GetHelp())
@@ -37,22 +38,22 @@ void FastCopy::fast_copy(int argc, char *argv[])
         LogConfiguration(config);
 
         ThreadsCreator creator(config);
-        creator.Create<FastCopy::FileManager>();
+        creator.Create<FastCopy::FileManagerCV>();
     }
     else
     {
         FlushLog();
 #if (_WIN32)
-        //SERVICE_TABLE_ENTRY ServiceTable[] =
+        // SERVICE_TABLE_ENTRY ServiceTable[] =
         //{
-        //    {SERVICE_NAME, (LPSERVICE_MAIN_FUNCTION)ServiceMain},
-        //    {NULL, NULL}
-        //};
+        //     {SERVICE_NAME, (LPSERVICE_MAIN_FUNCTION)ServiceMain},
+        //     {NULL, NULL}
+        // };
 
-        //if (StartServiceCtrlDispatcher(ServiceTable) == FALSE)
+        // if (StartServiceCtrlDispatcher(ServiceTable) == FALSE)
         //{
-        //    GetLastError();
-        //}
+        //     GetLastError();
+        // }
 #elif (__LINUX__ || __gnu_linux__ || __linux__ || __linux || linux)
         daemon(1, 1);
 

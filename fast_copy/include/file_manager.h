@@ -41,7 +41,9 @@ namespace FastCopy
         std::shared_ptr<ConfigurationManager> configuration_;
         Utils::ThreadsafeQueue<fs::path> fileStorage_;
         std::binary_semaphore signalPrepareData_;
-        std::counting_semaphore<> signalProcessData_;
+        std::condition_variable var;
         std::mutex m;
+        bool processed {true};
+        std::counting_semaphore<8> signalProcessData_;
     };
 } //! Fast Copy

@@ -9,29 +9,31 @@ namespace fs = std::filesystem;
 namespace helper_functions
 {
 #if defined(_WIN32)
-    char SOURCE_DIR[]{ "D:\\task\\programming_books\\" };
-    char SOURCE_DIR_1[]{ "D:\\task\\Windows\\" };
-    char SOURCE_DIR_2[]{ "D:\\task\\test1\\" };
+    char SOURCE_DIR[]{"D:\\task\\programming_books\\"};
+    char SOURCE_DIR_1[]{"D:\\task\\Windows\\"};
+    char SOURCE_DIR_2[]{"D:\\task\\test1\\"};
 
-    char DESTINATION_DIR[]{ "D:\\task\\test\\" };
-    char DESTINATION_DIR_1[]{ "D:\\task\\test2\\" };
-    char DESTINATION_DIR_2[]{ "D:\\task\\test3\\" };
-    char DESTINATION_DIR_WITH_SPACE[]{ "D:\\task\\test\ new\\" };
+    char DESTINATION_DIR[]{"D:\\task\\test\\"};
+    char DESTINATION_DIR_1[]{"D:\\task\\test2\\"};
+    char DESTINATION_DIR_2[]{"D:\\task\\test3\\"};
+    char DESTINATION_DIR_WITH_SPACE[]{"D:\\task\\test\ new\\"};
 
-    char CONFIG_INI[]{ "D:\\task\\config.ini" };
-    char CONFIG_JSON[]{ "D:\\task\\config.json" };
+    char CONFIG_INI[]{"D:\\task\\config.ini"};
+    char CONFIG_JSON[]{"D:\\task\\config.json"};
 #else
     char SOURCE_DIR[]{"/mnt/d/task/programming_books/"};
     char SOURCE_DIR_1[]{"/mnt/d/task/Windows/"};
     char SOURCE_DIR_2[]{"/mnt/d/task/test1/"};
+    char SOURCE_DIR_3[]{"/mnt/d/task/UE_4.27/"};
+    char SOURCE_DIR_4[]{"/mnt/d/SkillBox"};
 
-    char DESTINATION_DIR[]{ "/mnt/d/task/test/" };
-    char DESTINATION_DIR_1[]{ "/mnt/d/task/test2/" };
-    char DESTINATION_DIR_2[]{ "/mnt/d/task/test3/" };
-    char DESTINATION_DIR_WITH_SPACE[]{ "/mnt/d/task/test\\ new/" };
+    char DESTINATION_DIR[]{"/mnt/d/task/test/"};
+    char DESTINATION_DIR_1[]{"/mnt/d/task/test2/"};
+    char DESTINATION_DIR_2[]{"/mnt/d/task/test3/"};
+    char DESTINATION_DIR_WITH_SPACE[]{"/mnt/d/task/test\\ new/"};
 
-    char CONFIG_INI[]{ "/mnt/d/task/config.ini" };
-    char CONFIG_JSON[]{ "/mnt/d/task/config.json" };
+    char CONFIG_INI[]{"/mnt/d/task/config.ini"};
+    char CONFIG_JSON[]{"/mnt/d/task/config.json"};
 #endif
 
     char CP[]{"cp -r "};
@@ -91,12 +93,12 @@ namespace helper_functions
         std::cout << "# of files in " << DIR << ": " << count << '\n';
         return count;
     }
-    
-    std::vector<char*> ConvertToArgv(const std::vector<std::string>& arguments)
+
+    std::vector<char *> ConvertToArgv(const std::vector<std::string> &arguments)
     {
-        std::vector<char*> argv;
-        for (const auto& arg : arguments)
-            argv.push_back((char*)arg.data());
+        std::vector<char *> argv;
+        for (const auto &arg : arguments)
+            argv.push_back((char *)arg.data());
         argv.push_back(nullptr);
         return argv;
     }

@@ -34,8 +34,6 @@ protected:
 };
 
 // To run tests you need to turn off LOG_ENABLED define in logger.h
-// And to comment out LogInit in fast_copy.cpp
-
 TEST_F(FileManagerTest, FileNameMask_FileDoesNotMatchMask)
 {
     char filename_mask[]{"\\.txt"};

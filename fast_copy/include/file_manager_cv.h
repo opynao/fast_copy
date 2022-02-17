@@ -12,6 +12,8 @@
 #include <thread>
 #include <semaphore>
 #include <string>
+#include <condition_variable>
+#include <atomic>
 
 namespace fs = std::filesystem;
 
@@ -40,10 +42,11 @@ namespace FastCopy
     private:
         std::shared_ptr<ConfigurationManager> configuration_;
         Utils::ThreadsafeQueue<fs::path> fileStorage_;
-        std::condition_variable signalPrepareData_;
-        std::condition_variable signalProcessData_;
+        std::condition_variable_any signalPrepareData_;
+        std::condition_variable_any signalProcessData_;
         bool prepared;
         bool processed;
+        std::atomic_bool m_bFinished;
         std::mutex m;
     };
 } //! Fast Copy

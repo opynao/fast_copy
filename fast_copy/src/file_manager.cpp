@@ -13,10 +13,10 @@ using namespace Utils;
 
 namespace FastCopy
 {
-	FileManager::FileManager(const std::shared_ptr<ConfigurationManager>& configuration)
-		: configuration_{ configuration },
-		signalPrepareData_(1),
-		signalProcessData_(0)
+	FileManager::FileManager(const std::shared_ptr<ConfigurationManager> &configuration)
+		: configuration_{configuration},
+		  signalPrepareData_(1),
+		  signalProcessData_(0)
 	{
 	}
 
@@ -24,10 +24,12 @@ namespace FastCopy
 	{
 		LOG_I("Task <Prepare Data> created");
 
-		signalPrepareData_.acquire();
-
-		for (auto& file : fs::recursive_directory_iterator(configuration_->GetPath(PathType::Source)))
+		//signalPrepareData_.acquire();
+		std::unique_lock lk(m);
+		var.wait(lk, [this]{ return processed;});
+		for (auto &file : fs::recursive_directory_iterator(configuration_->GetPath(PathType::Source)))
 		{
+
 			if (IsFileMatchesMask(file) && fs::is_regular_file(file))
 			{
 				fs::path path = file.path();
@@ -35,36 +37,40 @@ namespace FastCopy
 				LOG_I("In the directory {0} found file \"{1}\"", ConvertWstringToString(String(path.remove_filename())), ConvertWstringToString(fileName));
 
 				fileStorage_.Push(file);
-
+				// PR(fileStorage_.Size());
 				if (fileStorage_.Size() == configuration_->GetQueueSize())
 				{
 					signalProcessData_.release(configuration_->GetThreadsCount());
-					signalPrepareData_.acquire();
+					signalPrepareData_.release();
 				}
 			}
 		}
 		signalProcessData_.release(configuration_->GetThreadsCount());
+		// signalPrepareData_.release();
 	}
 
 	void FileManager::ProcessData()
 	{
 		LOG_I("Task <Process Data> created");
+		// signalPrepareData_.release();
 		signalProcessData_.acquire();
+		// PR(fileStorage_.Size());
 		while (!fileStorage_.IsEmpty())
 		{
 			const auto sourcePath = fileStorage_.Pop();
 			const fs::path destinationPath = configuration_->GetPath(PathType::Destination);
 			Copy(*sourcePath, destinationPath);
+			// PR(fileStorage_.Size());
 			if (fileStorage_.IsEmpty())
 			{
 				signalPrepareData_.release();
-				signalProcessData_.acquire();
+				// signalProcessData_.release(configuration_->GetThreadsCount());
 			}
 		}
-		signalProcessData_.release();
+		signalProcessData_.release(configuration_->GetThreadsCount());
 	}
 
-	void FileManager::Copy(const fs::path& sourcePath, const fs::path& destinationPath) const
+	void FileManager::Copy(const fs::path &sourcePath, const fs::path &destinationPath) const
 	{
 		std::error_code ec;
 
@@ -80,13 +86,13 @@ namespace FastCopy
 		}
 	}
 
-	bool FileManager::IsFileMatchesMask(const fs::directory_entry& sourcePath) const
+	bool FileManager::IsFileMatchesMask(const fs::directory_entry &sourcePath) const
 	{
-		auto rx = std::regex{ configuration_->GetFileNameMask(), std::regex_constants::icase };
+		auto rx = std::regex{configuration_->GetFileNameMask(), std::regex_constants::icase};
 		return std::regex_search(ConvertWstringToString(String(sourcePath.path().filename())), rx);
 	}
 
-	fs::path FileManager::GetFinalPath(const fs::path& sourcePath, fs::path destinationPath) const
+	fs::path FileManager::GetFinalPath(const fs::path &sourcePath, fs::path destinationPath) const
 	{
 		const String currentExt = String(sourcePath.filename().extension());
 		return destinationPath.replace_filename(sourcePath.filename().replace_extension(ConvertWstringToString(currentExt) + configuration_->GetAdditionalFileExtension()));

@@ -20,7 +20,7 @@ namespace Utils
         std::shared_ptr<T> Pop()
         {
             std::unique_lock<std::mutex> lk(mut);
-            std::shared_ptr<T> res(std::make_shared<T>(std::move(data_queue.front())));
+            std::shared_ptr<T> res(std::make_shared<T>(data_queue.front()));
             data_queue.pop();
             return res;
         }

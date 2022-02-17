@@ -1,14 +1,10 @@
 ## fast_copy
 
-Fast copy utility using C++20 threads library. Tested on Debian bookworm, built with g++-11.
+Fast copy utility using C++20 threads library.
 
 ### How to build
 
-To built you have to install cmake, build-essential, libspdlog-dev packages.
-```sh
-sudo apt install cmake build-essential libspdlog-dev
-```
-then copy the source and build it
+To built you need to have cmake and some compiler at your computer.
 ```sh
 git clone https://github.com/opynao/fast_copy  
 cd fast_copy  

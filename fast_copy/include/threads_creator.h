@@ -18,7 +18,7 @@ namespace FastCopy
             T fm(m_config);
             std::vector<std::jthread> vThreadsPool;
 
-            for (size_t i = 0; i != m_config->GetThreadsCount() - 1; ++i)
+            for (size_t i = 0; i != m_config->GetThreadsCount(); ++i)
                 vThreadsPool.emplace_back([&fm]
                                           { fm.ProcessData(); });
             vThreadsPool.emplace_back([&fm]

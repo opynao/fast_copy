@@ -12,10 +12,11 @@ using namespace Utils;
 
 namespace FastCopy
 {
-	FileManagerCV::FileManagerCV(const std::shared_ptr<ConfigurationManager>& configuration)
-		: configuration_{ configuration },
-		prepared{ false },
-		processed{ true }
+	FileManagerCV::FileManagerCV(const std::shared_ptr<ConfigurationManager> &configuration)
+		: configuration_{configuration},
+		  prepared{false},
+		  processed{true},
+		  m_bFinished{false}
 	{
 	}
 
@@ -23,12 +24,13 @@ namespace FastCopy
 	{
 		LOG_I("Task <Prepare Data> created");
 
-		std::unique_lock<std::mutex> lk(m);
-		signalPrepareData_.wait(lk, [this]
-			{ return processed; });
-
-		for (auto& file : fs::recursive_directory_iterator(configuration_->GetPath(PathType::Source)))
+		for (auto &file : fs::recursive_directory_iterator(configuration_->GetPath(PathType::Source)))
 		{
+			std::unique_lock<std::mutex> lk(m);
+
+			signalPrepareData_.wait(lk, [this]
+									{ return processed; });
+
 			if (IsFileMatchesMask(file) && fs::is_regular_file(file))
 			{
 				fs::path path = file.path();
@@ -37,47 +39,51 @@ namespace FastCopy
 
 				fileStorage_.Push(file);
 
-				if (fileStorage_.Size() == 100)
+				if (fileStorage_.Size() == configuration_->GetQueueSize())
 				{
-					lk.unlock();
+					processed = false;
 					prepared = true;
-					signalPrepareData_.notify_all();
+					lk.unlock();
+					signalProcessData_.notify_all();
 				}
 			}
 		}
-		lk.unlock();
+		m_bFinished = true;
+		processed = false;
 		prepared = true;
-		signalPrepareData_.notify_all();
+		signalProcessData_.notify_all();
 	}
 
 	void FileManagerCV::ProcessData()
 	{
 		LOG_I("Task <Process Data> created");
 
-		std::unique_lock<std::mutex> lk(m);
-		signalPrepareData_.wait(lk, [this]
-			{ return prepared; });
-
-		while (!fileStorage_.IsEmpty())
+		do
 		{
-			const auto sourcePath = fileStorage_.Pop();
-			const fs::path destinationPath = configuration_->GetPath(PathType::Destination);
-			Copy(*sourcePath, destinationPath);
-
-			if (fileStorage_.IsEmpty())
 			{
-				lk.unlock();
-				processed = true;
-				signalPrepareData_.notify_all();
+				std::unique_lock<std::mutex> lk(m);
+				signalProcessData_.wait(lk, [this]
+										{ return prepared; });
 			}
-		}
-		signalPrepareData_.notify_all();
+			while (!fileStorage_.IsEmpty())
+			{
+				const auto sourcePath = fileStorage_.Pop();
+				const fs::path destinationPath = configuration_->GetPath(PathType::Destination);
+				Copy(*sourcePath, destinationPath);
+				if (fileStorage_.IsEmpty() && m_bFinished == false)
+				{
+					processed = true;
+					prepared = false;
+			//		lk.unlock();
+					signalPrepareData_.notify_one();
+				}
+			}
+		} while (m_bFinished == false);
 	}
 
-	void FileManagerCV::Copy(const fs::path& sourcePath, const fs::path& destinationPath) const
+	void FileManagerCV::Copy(const fs::path &sourcePath, const fs::path &destinationPath) const
 	{
 		std::error_code ec;
-
 		fs::copy_file(sourcePath, GetFinalPath(sourcePath, destinationPath), ec);
 
 		if (ec == std::errc::file_exists)
@@ -90,13 +96,13 @@ namespace FastCopy
 		}
 	}
 
-	bool FileManagerCV::IsFileMatchesMask(const fs::directory_entry& sourcePath) const
+	bool FileManagerCV::IsFileMatchesMask(const fs::directory_entry &sourcePath) const
 	{
-		auto rx = std::regex{ configuration_->GetFileNameMask(), std::regex_constants::icase };
+		auto rx = std::regex{configuration_->GetFileNameMask(), std::regex_constants::icase};
 		return std::regex_search(ConvertWstringToString(String(sourcePath.path().filename())), rx);
 	}
 
-	fs::path FileManagerCV::GetFinalPath(const fs::path& sourcePath, fs::path destinationPath) const
+	fs::path FileManagerCV::GetFinalPath(const fs::path &sourcePath, fs::path destinationPath) const
 	{
 		const String currentExt = sourcePath.filename().extension();
 		return destinationPath.replace_filename(sourcePath.filename().replace_extension(ConvertWstringToString(currentExt) + configuration_->GetAdditionalFileExtension()));
